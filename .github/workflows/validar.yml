@@ -1,0 +1,58 @@
+name: Validar VirtShield
+on:
+  push:
+    paths:
+      - compose.yaml
+      - 'lab/**'
+      - '.github/workflows/validar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Subir e verificar o laboratório
+        run: python3 lab/validar.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.5-flash-lite' }}
+      - name: Instalar Trivy
+        uses: aquasecurity/setup-trivy@v0.3.1
+        with:
+          version: v0.76.2
+      - name: Varrer as imagens locais
+        run: |
+          trivy --version
+          trivy image --image-src docker --scanners vuln --format json --output evidencias/trivy_app.json virtshield-app:local
+          trivy image --image-src docker --scanners vuln --format json --output evidencias/trivy_postgres.json postgres:16-alpine
+      - name: Confirmar chamada Gemini quando a chave estiver configurada
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "Gemini pendente: secret GEMINI_API_KEY ausente."
+          elif grep -q "Gemini · " evidencias/relatorio_docker.html; then
+            echo "Gemini respondeu com uma explicação autenticada."
+          else
+            echo "Gemini não retornou uma explicação. Confira o modelo e a chave no projeto."
+            exit 1
+          fi
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      - name: Exibir logs se houver falha
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Guardar evidências
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: virtshield-evidencias
+          path: |
+            evidencias/*.json
+            evidencias/*.html
+      - name: Parar os serviços
+        if: always()
+        run: docker compose down
