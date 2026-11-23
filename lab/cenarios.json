@@ -1,0 +1,4 @@
+{
+  "referencia": {"segredos": false, "rede": false, "processo": false, "banco": false, "superficie": false},
+  "protegido": {"segredos": true, "rede": true, "processo": true, "banco": true, "superficie": true}
+}
