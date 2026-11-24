@@ -21,6 +21,11 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.5-flash-lite' }}
+      - name: Verificar prévia e controles em execução
+        shell: bash
+        run: |
+          curl -fsS -o /dev/null 'http://127.0.0.1:8081/?authuser=0'
+          python3 lab/verificar_etapas.py --automatico | tee evidencias/verificacao_etapas.txt
       - name: Instalar Trivy
         uses: aquasecurity/setup-trivy@v0.3.1
         with:
@@ -53,6 +58,7 @@ jobs:
           path: |
             evidencias/*.json
             evidencias/*.html
+            evidencias/verificacao_etapas.txt
       - name: Parar os serviços
         if: always()
         run: docker compose down
