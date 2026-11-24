@@ -2,13 +2,14 @@ from html import escape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import environ
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import psycopg
 
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path != "/":
+        if urlsplit(self.path).path != "/":
             self.send_error(404)
             return
 
