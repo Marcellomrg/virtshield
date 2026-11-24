@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VirtShield | Antes e depois</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1421;--panel:#121f30;--line:#2a394d;--text:#eef4fc;--muted:#adc0d3;--accent:#ffac9c;--tint:#35252d;--green:#79ebcb;--max:1080px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55}
+body[data-mode=protected]{--accent:#79ebcb;--tint:#143634}
+.shell{max-width:var(--max);width:calc(100% - 48px);margin-inline:auto}
+header{border-bottom:1px solid var(--line)}header .shell{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:19px}
+.wordmark{font-size:1.08rem;font-weight:800;letter-spacing:.02em}.wordmark::before{content:"";display:inline-block;width:8px;height:16px;border-radius:2px;background:var(--green);margin-right:10px;vertical-align:-2px}
+header a,.links a{color:#b8e6dc;text-underline-offset:4px;font-size:.9rem}
+main{padding:40px 0 44px}h1,h2,h3,p{margin:0}h1{font-size:clamp(2.05rem,4.2vw,3.55rem);letter-spacing:-.058em;line-height:1.07;max-width:800px}h2{font-size:1.28rem;line-height:1.25;letter-spacing:-.02em}h3{font-size:1.01rem;line-height:1.3}
+.lead{color:var(--muted);margin-top:12px;max-width:710px}
+.switch{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 17px}
+button{font:inherit} .switch button,.next{padding:10px 16px;color:var(--text);background:#142234;border:1px solid var(--line);border-radius:8px;font-weight:690;cursor:pointer}
+.switch button[aria-pressed=true]{background:var(--tint);color:var(--accent);border-color:var(--accent)}
+button:hover,a:hover{filter:brightness(1.2)}button:focus-visible,a:focus-visible{outline:3px solid #c0fff2;outline-offset:4px}
+.overview{padding:18px 22px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;display:grid;grid-template-columns:175px 1fr;gap:22px;align-items:center;margin-bottom:16px}
+.score{color:var(--accent);font-size:clamp(2.3rem,5vw,3.3rem);font-weight:820;letter-spacing:-.06em;line-height:1.1}.score span{font-size:.46em;letter-spacing:-.02em}
+.overview p,.note,details p,.state p{color:var(--muted)}.overview h2{margin-bottom:4px}
+.flow{display:flex;gap:9px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);border-top:1px solid var(--line);padding:13px 0;margin-bottom:14px}
+.flow-node{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:.9rem}
+.flow-node.db{border-color:var(--accent);color:var(--accent);background:var(--tint)}.arrow{color:var(--muted)}
+.rows{list-style:none;margin:0;padding:0}.row{display:grid;grid-template-columns:190px 1fr;gap:18px;padding:15px 0;border-bottom:1px solid var(--line)}
+.label{display:block;color:var(--accent);font-size:.76rem;font-weight:800;margin-top:4px;text-transform:uppercase;letter-spacing:.055em}
+.state strong{font-size:1rem}.state p{font-size:.91rem}
+.details{margin-top:16px}.details summary{color:#c8dbe9;cursor:pointer;font-size:.94rem;font-weight:650}.details p{margin-top:4px;font-size:.9rem}
+.proofs{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:19px;padding-top:14px;gap:12px}.proofs span{display:block;color:var(--muted);font-size:.83rem}.proofs strong{color:var(--green);font-size:1rem}
+.footer{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:20px}.links{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}.next{color:var(--green);border-color:#3e8077}
+[hidden]{display:none!important}@media(max-width:680px){.shell{width:calc(100% - 30px)}main{padding-top:29px}.overview{grid-template-columns:1fr;gap:9px;padding:14px}.row{grid-template-columns:1fr;gap:4px}.proofs{grid-template-columns:1fr}.switch button{flex-grow:1}.flow{gap:6px}.flow-node{padding:4px 7px}}
+</style>
+</head>
+<body data-mode="reference">
+<header><div class="shell"><div class="wordmark">VirtShield</div><a href="https://github.com/Marcellomrg/virtshield/actions/runs/45101838501" target="_blank" rel="noopener">Evidências no GitHub</a></div></header>
+<main class="shell">
+<h1>O que muda com a proteção?</h1>
+<p class="lead">Percorra as cinco verificações. Veja primeiro onde o cenário de referência falha e, depois, como cada controle aparece no ambiente protegido.</p>
+<nav class="switch" aria-label="Cenário da demonstração">
+<button id="before" type="button" aria-pressed="true" aria-controls="comparison">1. Cenário inicial</button>
+<button id="after" type="button" aria-pressed="false" aria-controls="comparison">2. Ambiente protegido</button>
+</nav>
+<div id="comparison">
+<section class="overview" aria-live="polite">
+<div><div class="score"><b id="score">0</b><span>/100</span></div><p id="count">0 de 5 controles</p></div>
+<div><h2 id="stage">Cenário inicial simulado</h2><p id="caption">O auditor offline analisa uma configuração de referência com cinco falhas. Essa etapa usa dados de teste.</p></div>
+</section>
+<div class="flow" aria-label="Visão da arquitetura">
+<span class="flow-node">Navegador</span><span class="arrow" aria-hidden="true">→</span><span class="flow-node">Aplicação Python</span><span class="arrow" aria-hidden="true">→</span><span class="flow-node db" id="flowDb">PostgreSQL · porta publicada</span>
+</div>
+<h2>Controles de segurança</h2>
+<ul class="rows" id="rows"></ul>
+<div class="details" id="protectedEvidence" hidden>
+<div class="proofs" aria-label="Resultados adicionais do ambiente protegido">
+<div><span>Resposta da aplicação</span><strong>HTTP 200</strong></div>
+<div><span>Conta usada pela aplicação</span><strong>app_user</strong></div>
+<div><span>Backup conferido</span><strong>4 de 4 registros restaurados</strong></div>
+</div>
+</div>
+<details class="details"><summary>De onde vem a pontuação?</summary><p>Cada controle vale 20 pontos. Na referência, o auditor lê dados de configuração simulados. No Docker, ele lê o Compose e verifica as permissões no catálogo do PostgreSQL. O backup e a varredura de vulnerabilidades são avaliados separadamente.</p></details>
+</div>
+<div class="footer"><div class="links"><a id="live" href="#comparativo" hidden target="_blank" rel="noopener">Abrir a aplicação na porta 8081</a><a href="https://github.com/Marcellomrg/virtshield" target="_blank" rel="noopener">Código-fonte</a></div><button class="next" id="next" type="button">Ver ambiente protegido →</button></div>
+</main>
+<script>
+const rules = [
+  {
+    name:"Credencial",
+    reference:["Senha exposta na configuração","Quem lê a configuração pode encontrar a credencial usada pela aplicação."],
+    protected:["Senha em arquivo de segredo","O Docker monta a credencial em um arquivo separado. O auditor confere essa montagem e o caminho esperado."]
+  },
+  {
+    name:"Rede",
+    reference:["Porta do PostgreSQL publicada","O cenário de referência descreve um banco acessível diretamente pela porta do host."],
+    protected:["PostgreSQL em rede interna","O auditor verifica que o banco está em uma rede interna do Docker e que nenhuma porta do banco foi publicada no host."]
+  },
+  {
+    name:"Processo",
+    reference:["Aplicação com privilégios excessivos","Rodar como root ou em modo privilegiado amplia o que o processo pode fazer."],
+    protected:["Aplicação sem root e sem modo privilegiado","O auditor verifica que o identificador do usuário é diferente de zero e que o modo privilegiado está desativado."]
+  },
+  {
+    name:"Conta do banco",
+    reference:["Conta da aplicação com acesso excessivo","Permissões amplas permitem que a aplicação altere os dados que deveria apenas consultar."],
+    protected:["app_user com leitura na tabela de teste","O auditor consulta o catálogo do PostgreSQL. A conta pode fazer SELECT na tabela e tem as permissões de alteração avaliadas bloqueadas."]
+  },
+  {
+    name:"Contêiner",
+    reference:["Arquivos graváveis e privilégios amplos","Uma aplicação com essas permissões tem mais maneiras de alterar seu ambiente de execução."],
+    protected:["Sistema de arquivos somente leitura","O auditor verifica a configuração somente leitura, a remoção de capacidades e o bloqueio de ganho de novos privilégios."]
+  }
+];
+const dockerEvidence = {"score":100,"passed":5,"source":"Validação registrada no Google Cloud Shell"};
+const liveApp = false;
+const before = document.getElementById("before");
+const after = document.getElementById("after");
+const next = document.getElementById("next");
+const rows = document.getElementById("rows");
+let current = "reference";
+
+function make(tag, value, className){
+  const node=document.createElement(tag);
+  node.textContent=value;
+  if(className) node.className=className;
+  return node;
+}
+
+function show(mode){
+  current=mode;
+  const isProtected=mode==="protected";
+  document.body.dataset.mode=mode;
+  before.setAttribute("aria-pressed",String(!isProtected));
+  after.setAttribute("aria-pressed",String(isProtected));
+  document.getElementById("score").textContent=isProtected?dockerEvidence.score:0;
+  document.getElementById("count").textContent=(isProtected?dockerEvidence.passed:0)+" de 5 controles";
+  document.getElementById("stage").textContent=isProtected?"Ambiente protegido no Docker":"Cenário inicial simulado";
+  document.getElementById("caption").textContent=isProtected
+    ?dockerEvidence.source+". A nota resume os cinco controles verificados."
+    :"O auditor offline analisa uma configuração de referência com cinco falhas. Essa etapa usa dados de teste.";
+  document.getElementById("flowDb").textContent=isProtected?"PostgreSQL · rede interna":"PostgreSQL · porta publicada";
+  document.getElementById("protectedEvidence").hidden=!isProtected;
+  rows.replaceChildren(...rules.map(rule=>{
+    const [finding,why]=rule[mode];
+    const row=make("li","","row");
+    const label=make("div","");
+    label.append(make("h3",rule.name),make("span",isProtected?"✓ Controle aplicado":"× Falha na referência","label"));
+    const state=make("div","","state");
+    state.append(make("strong",finding),make("p",why));
+    row.append(label,state);
+    return row;
+  }));
+  next.textContent=isProtected?"← Voltar ao cenário inicial":"Ver ambiente protegido →";
+}
+before.addEventListener("click",()=>show("reference"));
+after.addEventListener("click",()=>show("protected"));
+next.addEventListener("click",()=>{
+  const target=current==="protected"?"reference":"protected";
+  show(target);
+  (target==="protected"?after:before).focus();
+});
+const currentUrl=new URL(location.href);
+if(liveApp&&currentUrl.hostname.startsWith("8083-")&&currentUrl.hostname.endsWith(".cloudshell.dev")){
+  currentUrl.hostname=currentUrl.hostname.replace(/^8083-/,"8081-");
+  currentUrl.pathname="/";
+  const link=document.getElementById("live");
+  link.href=currentUrl.toString();
+  link.hidden=false;
+}
+show("reference");
+</script>
+</body>
+</html>
